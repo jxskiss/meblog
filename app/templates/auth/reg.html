@@ -1,0 +1,19 @@
+{% extends "_base.html" %}
+
+{% block title %}注册{% endblock %}
+
+{% block content %}
+<section class="form-simple">
+    <div class="container">
+        <form action="{{ url_for('.register') }}" method="post" name="login">
+            {{ form.hidden_tag() }}
+            <p><span>{{ form.email.label }}{{ form.email }}</span></p>
+            <p>{{ form.username.label }}{{ form.username }}</p>
+            <p>{{ form.password.label }}{{ form.password }}</p>
+            <p>{{ form.confirm.label }}{{ form.confirm }}</p>
+            <p>{{ form.regcode.label }}{{ form.regcode }}</p>
+            <p>{{ form.submit }}</p>
+        </form>
+    </div>
+</section>
+{% endblock %}

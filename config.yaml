@@ -1,0 +1,11 @@
+name: meblog
+version: 1
+
+handlers:
+- url: /static/
+  static_path: static
+  gzip: on
+- url: /favicon.ico
+  static_path: favicon.ico
+- url: /robots.txt
+  static_path: robots.txt

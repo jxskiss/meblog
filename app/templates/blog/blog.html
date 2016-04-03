@@ -1,0 +1,44 @@
+{% extends "_base.html" %}
+
+{%- block title %}{{ config['MEBLOG_SITE_TITLE'] }}{%- endblock title %}
+
+{% block content %}
+<section class="intro">
+    <div class="container">
+        <p class="lead">这是<strong class="author-name" itemprop="name">MEBLOG</strong>的DEMO网站，meblog是一个简单、美观、易用的<em itemprop="jobTitle">博客程序</em>。<br>
+            这是使用 Flask 框架的学习作品，同时也被努力打造成一个具有良好<strong>扩展性</strong>的博客程序。 —— <a href="/about">了解更多</a></p></div>
+</section>
+<section class="post-list">
+    <div class="container">
+        <h2>近期文章：</h2>
+        {% for post in posts %}
+            <article class="post-item">
+                <p><strong><a href="{{ url_for('.post', id=post.id) }}" class="post-link">{{ post.title }}</a></strong>
+                    — <span class="post-meta">最后更新：<time>{{ post.date() }}</time></span></p>
+                {% if post.summary %}<p><span>{{ post.summary | safe }}</span>
+                    <a href="{{ url_for('.post', id=post.id) }}" class="post-link readmore">&raquo;&raquo;&raquo;</a>{% endif %}
+                    {% if current_user.is_authenticated %}<a href="{{ url_for('.edit', id=post.id) }}" class="post-link edit-link">编辑</a>{% endif %}</p>
+            </article>
+        {% endfor %}
+    </div>
+    <div class="container">
+        <nav class="pagination" role="pagination">
+            <ul>
+            {% for p in pagination.iter_pages() %}
+                {% if p %}
+                    {% if p == pagination.page %}
+                    <li class="active page-number"><a href="{{ url_for('.index', page = p) }}{{ fragment }}">{{ p }}</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('.index', page = p) }}{{ fragment }}">{{ p }}</a></li>
+                    {% endif %}
+                {% else %}
+                    <li class="disabled"><a href="#">&hellip;</a></li>
+                {% endif %}
+            {% endfor %}
+            <li{% if not pagination.has_next %} class="disabled"{% endif %}>
+                <a href="{% if pagination.has_next %}{{ url_for('.index', page=pagination.next_num) }}{{ fragment }}{% else %}#{% endif %}"> &raquo; </a></li>
+            </ul>
+        </nav>
+    </div>
+</section>
+{% endblock content -%}

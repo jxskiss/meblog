@@ -1,0 +1,24 @@
+{% extends '_base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<article class="post container" itemscope itemtype="http://schema.org/BlogPosting">
+    <header class="post-header"><h1 class="post-title" itemprop="name headline">{{ post.title }}</h1>
+        <p class="post-meta">
+            <span>发表日期：<time datetime="{{ post.date('p') }}" itemprop="datePublished">{{ post.date('p') }}</time></span>
+            {% if post.date('u') > post.date('p') %}<span>，最近更新：<time datetime="{{ post.date('u') }}" itemprop="dateUpdated">{{ post.date('u') }}</time></span>{% endif %}
+            {% if current_user.is_authenticated %}<a href="{{ url_for('.edit', id=post.id) }}" class="edit-link">编辑</a>{% endif %}
+        </p>
+    </header>
+    <div class="post-content" itemprop="articleBody">{{ post.body_html | safe }}</div>
+</article>
+<aside id="comments" class="comments">
+    <div class="container"><h3><i class="icon icon-comments-o"></i> 评论：</h3>
+    <!-- UY BEGIN -->
+    <div id="uyan_frame"></div>
+    <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid={{ config['MEBLOG_UYAN_UID'] }}"></script>
+    <!-- UY END -->
+    </div>
+</aside>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "_page.html" %}
+
+{% block title %}关于meblog{% endblock %}
+
+{% block page_header %}关于meblog{% endblock %}
+
+{% block page_content %}
+    <p>meblog是一个简洁、美观、易用的blog程序：</p>
+    <ul>
+        <li>使用 Python 和 Flask, SQLAlchemy 搭建</li>
+        <li>数据库：PostgreSQL, MySQL, SQLite，SQLAlchemy 基本上支持所有主流的数据库</li>
+        <li>目标平台：以SAE为目标运行平台</li>
+    </ul>
+    <h2>特点：</h2>
+    <ul>
+        <li>不使用js，使用纯<code>HTML+CSS</code>布局页面，加载速度快</li>
+        <li>自动适应不同尺寸屏幕，电脑、平板、手机上都有很好的排版效果</li>
+        <li>使用360的字体镜像做CDN</li>
+        <li>容易扩展和修改</li>
+        <li>使用“有言”做评论管理，不用操垃圾评论的心了，还节省云豆</li>
+        <li>支持RSS订阅</li>
+        <li>原生支持Markdown，数据库存数Markdown源文件，节省空间，互操作性好</li>
+        <li>支持多为用户撰写文章（暂不支持权限管理）</li>
+        <li>开箱即用</li>
+        <li>开发中：代码高亮、数学公式支持</li>
+        <li>开发中：客户端工具发表文章</li>
+    </ul>
+{% endblock %}

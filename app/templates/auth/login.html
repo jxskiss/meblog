@@ -1,0 +1,17 @@
+{% extends "_base.html" %}
+
+{% block title %}登录{% endblock %}
+
+{% block content %}
+<section class="form-simple">
+    <div class="container">
+        <form action="{{ url_for('.login') }}" method="post" name="login">
+            {{ form.hidden_tag() }}
+            <p>{{ form.email.label }}{{ form.email }}</p>
+            <p>{{ form.password.label }}{{ form.password }}</p>
+            <p>{{ form.remember.label }}{{ form.remember }}</p>
+            <p>{{ form.submit }}</p>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "_base.html" %}
+
+{% block title %}{% if post %}{{ post.title }}{% else %}{{ '发表文章' }}{% endif %}{% endblock %}
+
+{% block content %}
+<section class="form-edit-post">
+    <div class="container">
+        <form action="{% if post %}{{ url_for('.edit', id=post.id) }}{% else %}{{ url_for('.new') }}{% endif %}" method="post" name="submit">
+            {{ form.hidden_tag() }}
+            <p>{{ form.title.label }}{% if post %}（<a href="{{ url_for('.post', id=post.id) }}">取消编辑</a>）{% endif %}{{ form.title }}</p>
+            <p>{{ form.categories.label }}{{ form.categories }}</p>
+            <p>{{ form.tags.label }}{{ form.tags }}</p>
+            <p>{{ form.summary.label }}{{ form.summary }}</p>
+            <p>{{ form.body }}</p>
+            <p>{{ form.submit }}</p>
+        </form>
+    </div>
+</section>
+{% endblock %}
