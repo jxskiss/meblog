@@ -37,5 +37,5 @@ class RegForm(Form):
             raise ValidationError(u'用户名已被使用')
 
     def validate_regcode(self, field):
-        if field.data != current_app.config['REG_CODE']:
+        if field.data != current_app.config['MEBLOG_REG_CODE']:
             raise ValidationError(u'注册码错误')

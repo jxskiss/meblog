@@ -14,12 +14,12 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = False
     POSTS_PER_PAGE = 10
-    REG_CODE = 'REGCODE'
 
     # meblog site configuration
     MEBLOG_SITE_NAME = 'meblog'
     MEBLOG_SITE_TITLE = "meblog's website"
     MEBLOG_UYAN_UID = 'dummy'
+    MEBLOG_REG_CODE = 'REGCODE'
     MEBLOG_SHOW_LOGIN = False
 
 
