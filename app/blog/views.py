@@ -11,7 +11,7 @@ from flask import render_template, redirect, url_for, request, current_app
 from flask.ext.login import login_required, current_user
 from werkzeug.contrib.atom import AtomFeed
 from .. import db
-from ..models import Post
+from ..models import Post, md2html
 from . import blog
 from .forms import PostForm
 
@@ -29,6 +29,10 @@ def index(page=1):
 @blog.route('/post/<id>')
 def post(id):
     post = Post.query.get_or_404(id)
+    if not post.body_html:
+        post.body_html = md2html(post.body)
+        db.session.add(post)
+        db.session.commit()
     return render_template('blog/post.html', post=post)
 
 

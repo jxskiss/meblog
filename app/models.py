@@ -90,6 +90,11 @@ categorized = db.Table(
 )
 
 
+def md2html(md):
+    return markdown(md, output_format='html', extensions=[
+        'markdown.extensions.extra'])
+
+
 class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
@@ -120,11 +125,11 @@ class Post(db.Model):
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        target.body_html = markdown(value, output_format='html', strip=True)
+        target.body_html = md2html(value)
 
     @staticmethod
     def on_changed_summary(target, value, oldvalue, initiator):
-        target.summary_html = markdown(value, output_format='html', strip=True)
+        target.summary_html = md2html(value)
 
 
 class Tag(db.Model):
