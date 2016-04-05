@@ -5,7 +5,7 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 	border:0;
 	font-size:100%;
 	font:inherit;
-	vertical-align:baseline
+	/*vertical-align:baseline*/
 }
 article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section {
 	display:block
@@ -175,14 +175,17 @@ h1,h2,h3,h4,h5,h6 {
 	font-family:"Open Sans","Helvetica Neue","Helvetica","Roboto","Arial",sans-serif;
 	font-size:1em;
 	line-height:1.2;
-	margin:0 0 .75em;
+	/*margin:0 0 .75em;*/
+	margin:.5em 0;
 	font-weight:300
 }
 h1 {
-	font-size:1.875rem
+	font-size:1.875rem;
+	margin:.75em 0;
 }
 h2 {
-	font-size:1.625rem
+	font-size:1.625rem;
+	margin:.75em 0;
 }
 h3 {
 	font-size:1.5rem
@@ -194,7 +197,8 @@ h5,h6 {
 	font-size:1rem
 }
 p {
-	margin:0 0 .75em
+	/*margin:0 0 .75em*/
+	margin:.35em 0
 }
 p.lead {
 	font-size:1.375rem;
@@ -234,7 +238,7 @@ code {
 	font-size:0.9em;
 	margin:0;
 	padding:0 5px;
-	background-color:#ededed
+	/*background-color:#ededed*/
 }
 pre {
 	-webkit-overflow-scrolling:touch;
@@ -610,17 +614,42 @@ hr {
 }
 
 /* begin customization styles */
+h1, h2 {
+	border-bottom:1px solid #eee;
+	padding-bottom:10px;
+}
+header h1 {
+	border-bottom:none;
+	padding-bottom:0;
+}
 label {
 	display:inline;
 }
 p.lead {
 	font-size:1.2em;
 }
+li {
+	padding-left:.4em;
+}
+ul {
+	list-style:disc;
+	margin-left:2.5em;
+}
+ol {
+	list-style: decimal;
+	margin-left:2.5em;
+}
+.footnote ol {
+	margin-left:1.5em
+}
 textarea#body {
 	min-height:32em;
 }
 textarea#summary {
 	min-height:8em;
+}
+sup {
+	font-size:smaller;
 }
 .form-simple {
 	margin-left:auto;
