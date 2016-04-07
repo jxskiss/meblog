@@ -11,7 +11,7 @@ from flask import render_template, redirect, url_for, request, current_app
 from flask.ext.login import login_required, current_user
 from werkzeug.contrib.atom import AtomFeed
 from .. import db
-from ..models import Post, md2html
+from ..models import Post, Tag, Category, md2html
 from . import blog
 from .forms import PostForm
 
@@ -46,9 +46,8 @@ def new():
             author_id=current_user.id,
             summary=form.summary.data,
             body=form.body.data,
-            # TODO: add tags and categories handler
-            # tags=form.tags.data.split(','),
-            # categories=form.categories.data.split(',')
+            tags=Tag.get_tags(form.tags.data),
+            categories=Category.get_cats(form.categories.data)
         )
         db.session.add(post)
         db.session.commit()
@@ -65,9 +64,8 @@ def edit(id):
         post.title = form.title.data
         post.summary = form.summary.data
         post.body = form.body.data
-        # TODO: add tags and categories handler
-        # post.tags = form.tags.data.split(',')
-        # post.categories = form.categories.data.split(',')
+        post.tags = Tag.get_tags(form.tags.data)
+        post.categories = Category.get_cats(form.categories.data)
         post.last_update = datetime.now()
         db.session.add(post)
         db.session.commit()
@@ -75,8 +73,8 @@ def edit(id):
     form.title.data = post.title
     form.summary.data = post.summary
     form.body.data = post.body
-    # form.tags.data = post.tags
-    # form.categories.data = post.categories
+    form.tags.data = ', '.join([t.name for t in post.tags])
+    form.categories.data = ', '.join([c.name for c in post.categories])
     return render_template('blog/edit.html', post=post, form=form)
 
 

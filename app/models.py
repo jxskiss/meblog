@@ -137,11 +137,50 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
 
+    def __repr__(self):
+        return '<Tag %s>' % self.name
+
+    @classmethod
+    def get_tags(cls, seq):
+        tags = []
+        new_tags = []
+        _seq = [t.strip() for t in seq.split(',')] if isinstance(seq, str) or \
+            isinstance(seq, unicode) else (seq if isinstance(seq, list) else [])
+        for t in _seq:
+            tag = cls.query.filter_by(name=t).first()
+            if not tag:
+                tag = cls(name=t)
+                new_tags.append(tag)
+            tags.append(tag)
+        db.session.add_all(new_tags)
+        db.session.flush()
+        print(tags)
+        return tags
+
 
 class Category(db.Model):
     __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
+
+    def __repr__(self):
+        return '<Category %s>' % self.name
+
+    @classmethod
+    def get_cats(cls, seq):
+        cats = []
+        new_cats = []
+        _seq = [c.strip() for c in seq.split(',')] if isinstance(seq, str) or \
+            isinstance(seq, unicode) else (seq if isinstance(seq, list) else [])
+        for c in _seq:
+            cat = cls.query.filter_by(name=c).first()
+            if not cat:
+                cat = cls(name=c)
+                new_cats.append(cat)
+            cats.append(cat)
+        db.session.add_all(new_cats)
+        db.session.flush()
+        return cats
 
 
 @login_manager.user_loader
