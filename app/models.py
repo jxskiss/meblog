@@ -110,13 +110,13 @@ class Post(db.Model):
         'Tag',
         secondary=tagged,
         backref=db.backref('tags', lazy='dynamic'),
-        lazy='dynamic'
+        lazy='select'
     )
     categories = db.relationship(
         'Category',
         secondary=categorized,
         backref=db.backref('categories', lazy='dynamic'),
-        lazy='dynamic'
+        lazy='select'
     )
 
     def date(self, type='u'):

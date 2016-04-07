@@ -28,7 +28,8 @@ def index(page=1):
 
 @blog.route('/post/<id>')
 def post(id):
-    post = Post.query.get_or_404(id)
+    post = Post.query.options(db.joinedload('tags')).options(
+        db.joinedload('categories')).get_or_404(id)
     if not post.body_html:
         post.body_html = md2html(post.body)
         db.session.add(post)

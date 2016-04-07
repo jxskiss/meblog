@@ -10,6 +10,10 @@
 {% block content %}
 <article class="post container" itemscope itemtype="http://schema.org/BlogPosting">
     <header class="post-header"><h1 class="post-title" itemprop="name headline">{{ post.title }}</h1>
+        {% if post.categories or post.tags %}<p class="post-meta">
+            {% if post.categories %}分类：{% for cat in post.categories %}<a href="#" class="tag-link">{{ cat.name }}</a>&nbsp;{% endfor %}{% endif %}
+            {% if post.tags %}，标签：{% for tag in post.tags %}<a href="#" class="category-link">{{ tag.name }}</a>&nbsp;{% endfor %}{% endif %}
+        </p>{% endif %}
         <p class="post-meta">
             <span>发表日期：<time datetime="{{ post.date('p') }}" itemprop="datePublished">{{ post.date('p') }}</time></span>
             {% if post.date('u') > post.date('p') %}<span>，最近更新：<time datetime="{{ post.date('u') }}" itemprop="dateUpdated">{{ post.date('u') }}</time></span>{% endif %}
