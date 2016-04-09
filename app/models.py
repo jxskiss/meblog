@@ -131,6 +131,8 @@ class Post(db.Model):
 
     @property
     def body_html(self):
+        if not self.body:
+            return None
         if not self.body_html_cache:
             self.body_html_cache = md2html(self.body)
             db.session.add(self)
@@ -139,6 +141,8 @@ class Post(db.Model):
 
     @property
     def summary_html(self):
+        if not self.summary:
+            return None
         if not self.summary_html_cache:
             self.summary_html_cache = md2html(self.summary)
             db.session.add(self)
@@ -146,8 +150,8 @@ class Post(db.Model):
         return self.body_html_cache
 
     def touch(self):
-        self.body_html_cache = md2html(self.body)
-        self.summary_html_cache = md2html(self.summary)
+        self.body_html_cache = None
+        self.summary_html_cache = None
         db.session.add(self)
         db.session.commit()
 

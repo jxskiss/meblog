@@ -17,7 +17,7 @@
         <p class="post-meta">
             <span>发表日期：<time datetime="{{ post.date('p') }}" itemprop="datePublished">{{ post.date('p') }}</time></span>
             {% if post.date('u') > post.date('p') %}<span>，最近更新：<time datetime="{{ post.date('u') }}" itemprop="dateUpdated">{{ post.date('u') }}</time></span>{% endif %}
-            {% if current_user.is_authenticated %}<a href="{{ url_for('.edit', id=post.id) }}" class="edit-link">编辑</a>{% endif %}
+            {% if current_user.is_authenticated %}<span class="edit-link"><a href="{{ url_for('.touch', id=post.id) }}">刷新HTML缓存</a> / <a href="{{ url_for('.edit', id=post.id) }}">编辑</a></span>{% endif %}
         </p>
     </header>
     <div class="post-content" itemprop="articleBody">{{ post.body_html | safe }}</div>
