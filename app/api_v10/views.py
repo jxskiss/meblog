@@ -21,10 +21,12 @@ def get_auth_token():
 @api.route('/publish', methods=['POST'])
 @auth.login_required
 def publish():
-    post = Post.from_json(request.json)
+    try:
+        post = Post(**request.json)
+    except Exception as err:
+        return jsonify({'status': 'failed', 'error': err.message})
     post.author = g.current_user
     db.session.add(post)
     db.session.commit()
-    print(post)
     return jsonify({'status': 'ok', 'url': url_for(
         'blog.post', id=post.id, _external=True)}), 201

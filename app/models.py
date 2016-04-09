@@ -119,18 +119,17 @@ class Post(db.Model):
         lazy='select'
     )
 
+    def __init__(self, **kwargs):
+        fields = kwargs.copy()
+        if 'tags' in fields:
+            fields['tags'] = Tag.get_tags(fields['tags'])
+        if 'categories' in fields:
+            fields['categories'] = Category.get_cats(fields['categories'])
+        super(Post, self).__init__(**fields)
+
     def date(self, type='u'):
         dt = {'u': self.last_update, 'p': self.post_time}
         return dt[type].strftime('%Y-%m-%d')
-
-    @classmethod
-    def from_json(cls, post_json):
-        get = lambda field: post_json.get(field, None)
-        title, summary, body = map(get, ('title', 'summary', 'body'))
-        tags = Tag.get_tags(get('tags'))
-        cats = Category.get_cats(get('categories'))
-        return cls(title=title, summary=summary, body=body,
-                   tags=tags, categories=cats)
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
@@ -151,6 +150,10 @@ class Tag(db.Model):
 
     @classmethod
     def get_tags(cls, seq):
+        if not seq:
+            return []
+        if isinstance(seq, list) and isinstance(seq[0], cls):
+            return seq
         tags = []
         new_tags = []
         _seq = [t.strip() for t in seq.split(',')] if isinstance(seq, str) or \
@@ -176,6 +179,10 @@ class Category(db.Model):
 
     @classmethod
     def get_cats(cls, seq):
+        if not seq:
+            return []
+        if isinstance(seq, list) and isinstance(seq[0], cls):
+            return seq
         cats = []
         new_cats = []
         _seq = [c.strip() for c in seq.split(',')] if isinstance(seq, str) or \

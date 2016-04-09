@@ -44,12 +44,9 @@ def new():
     if form.validate_on_submit():
         post = Post(
             title=form.title.data,
-            author_id=current_user.id,
-            summary=form.summary.data,
-            body=form.body.data,
-            tags=Tag.get_tags(form.tags.data),
-            categories=Category.get_cats(form.categories.data)
-        )
+            summary=form.summary.data, body=form.body.data,
+            tags=form.tags.data, categories=form.categories.data)
+        post.author = current_user
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('.post', id=post.id))
