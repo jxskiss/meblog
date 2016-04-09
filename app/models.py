@@ -186,7 +186,7 @@ class Tag(db.Model):
         new_tags = []
         _seq = [t.strip() for t in seq.split(',')] if isinstance(seq, str) or \
             isinstance(seq, unicode) else (seq if isinstance(seq, list) else [])
-        for t in _seq:
+        for t in filter(lambda x: x, _seq):
             tag = cls.query.filter_by(name=t).first()
             if not tag:
                 tag = cls(name=t)
@@ -215,7 +215,7 @@ class Category(db.Model):
         new_cats = []
         _seq = [c.strip() for c in seq.split(',')] if isinstance(seq, str) or \
             isinstance(seq, unicode) else (seq if isinstance(seq, list) else [])
-        for c in _seq:
+        for c in filter(lambda x: x, _seq):
             cat = cls.query.filter_by(name=c).first()
             if not cat:
                 cat = cls(name=c)
