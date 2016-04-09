@@ -123,13 +123,22 @@ class Post(db.Model):
         dt = {'u': self.last_update, 'p': self.post_time}
         return dt[type].strftime('%Y-%m-%d')
 
+    @classmethod
+    def from_json(cls, post_json):
+        get = lambda field: post_json.get(field, None)
+        title, summary, body = map(get, ('title', 'summary', 'body'))
+        tags = Tag.get_tags(get('tags'))
+        cats = Category.get_cats(get('categories'))
+        return cls(title=title, summary=summary, body=body,
+                   tags=tags, categories=cats)
+
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        target.body_html = md2html(value)
+        target.body_html = md2html(value) if value else None
 
     @staticmethod
     def on_changed_summary(target, value, oldvalue, initiator):
-        target.summary_html = md2html(value)
+        target.summary_html = md2html(value) if value else None
 
 
 class Tag(db.Model):
@@ -154,7 +163,6 @@ class Tag(db.Model):
             tags.append(tag)
         db.session.add_all(new_tags)
         db.session.flush()
-        print(tags)
         return tags
 
 
