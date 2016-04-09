@@ -30,10 +30,6 @@ def index(page=1):
 def post(id):
     post = Post.query.options(db.joinedload('tags')).options(
         db.joinedload('categories')).get_or_404(id)
-    if not post.body_html:
-        post.body_html = md2html(post.body)
-        db.session.add(post)
-        db.session.commit()
     return render_template('blog/post.html', post=post)
 
 
@@ -74,6 +70,14 @@ def edit(id):
     form.tags.data = ', '.join([t.name for t in post.tags])
     form.categories.data = ', '.join([c.name for c in post.categories])
     return render_template('blog/edit.html', post=post, form=form)
+
+
+@blog.route('/touch/<int:id>', methods=['GET'])
+@login_required
+def touch(id):
+    post = Post.query.filter_by(id=id).first()
+    post.touch()
+    return redirect(url_for('.post', id=post.id))
 
 
 @blog.route('/atom.xml')

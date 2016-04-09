@@ -79,14 +79,16 @@ class AnonymousUser(AnonymousUserMixin):
 tagged = db.Table(
     'tagged',
     db.Column('post_id', db.Integer, db.ForeignKey('posts.id')),
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'))
+    db.Column('tag_id', db.Integer, db.ForeignKey(
+        'tags.id', onupdate='CASCADE', ondelete='CASCADE'))
 )
 
 
 categorized = db.Table(
     'categorized',
     db.Column('post_id', db.Integer, db.ForeignKey('posts.id')),
-    db.Column('category_id', db.Integer, db.ForeignKey('categories.id'))
+    db.Column('category_id', db.Integer, db.ForeignKey(
+        'categories.id', onupdate='CASCADE', ondelete='CASCADE'))
 )
 
 
@@ -103,9 +105,9 @@ class Post(db.Model):
     post_time = db.Column(db.DateTime, default=datetime.now)
     last_update = db.Column(db.DateTime, default=datetime.now)
     summary = db.Column(db.String(1024))
-    summary_html = db.Column(db.String(1024))
+    summary_html_cache = db.Column(db.String(1024))
     body = db.Column(db.Text)
-    body_html = db.Column(db.Text)
+    body_html_cache = db.Column(db.Text)
     tags = db.relationship(
         'Tag',
         secondary=tagged,
@@ -126,6 +128,28 @@ class Post(db.Model):
         if 'categories' in fields:
             fields['categories'] = Category.get_cats(fields['categories'])
         super(Post, self).__init__(**fields)
+
+    @property
+    def body_html(self):
+        if not self.body_html_cache:
+            self.body_html_cache = md2html(self.body)
+            db.session.add(self)
+            db.session.commit()
+        return self.body_html_cache
+
+    @property
+    def summary_html(self):
+        if not self.summary_html_cache:
+            self.summary_html_cache = md2html(self.summary)
+            db.session.add(self)
+            db.session.commit()
+        return self.body_html_cache
+
+    def touch(self):
+        self.body_html_cache = md2html(self.body)
+        self.summary_html_cache = md2html(self.summary)
+        db.session.add(self)
+        db.session.commit()
 
     def date(self, type='u'):
         dt = {'u': self.last_update, 'p': self.post_time}
