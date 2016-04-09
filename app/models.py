@@ -161,11 +161,11 @@ class Post(db.Model):
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        target.body_html = md2html(value) if value else None
+        target.body_html_cache = md2html(value) if value else None
 
     @staticmethod
     def on_changed_summary(target, value, oldvalue, initiator):
-        target.summary_html = md2html(value) if value else None
+        target.summary_html_cache = md2html(value) if value else None
 
 
 class Tag(db.Model):
