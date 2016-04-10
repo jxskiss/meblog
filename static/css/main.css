@@ -639,6 +639,12 @@ ol {
 	list-style: decimal;
 	margin-left:2.5em;
 }
+strong {
+	font-weight:bold;
+}
+em {
+	font-style: italic;
+}
 .footnote ol {
 	margin-left:1.5em
 }
