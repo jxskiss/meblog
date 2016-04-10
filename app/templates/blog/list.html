@@ -7,7 +7,7 @@
 {% block content %}
 <section class="post-list">
     <div class="container">
-        {% if tag %}<h2>贴上标签【{{ tag.name }}】的文章：</h2>{% elif category %}<h2>分类到【{{ category.name }}】的文章</h2>{% endif %}
+        {% if tag %}<h2>贴上标签【{{ tag.name }}】的文章：</h2>{% elif category %}<h2>分类到【{{ category.name }}】的文章：</h2>{% endif %}
         {% for post in posts %}
             <article class="post-item">
                 <p><strong><a href="{{ url_for('.post', id=post.id) }}" class="post-link">{{ post.title }}</a></strong>
