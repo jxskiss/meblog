@@ -79,14 +79,16 @@ class AnonymousUser(AnonymousUserMixin):
 tagged = db.Table(
     'tagged',
     db.Column('post_id', db.Integer, db.ForeignKey('posts.id')),
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'))
+    db.Column('tag_id', db.Integer, db.ForeignKey(
+        'tags.id', onupdate='CASCADE', ondelete='CASCADE'))
 )
 
 
 categorized = db.Table(
     'categorized',
     db.Column('post_id', db.Integer, db.ForeignKey('posts.id')),
-    db.Column('category_id', db.Integer, db.ForeignKey('categories.id'))
+    db.Column('category_id', db.Integer, db.ForeignKey(
+        'categories.id', onupdate='CASCADE', ondelete='CASCADE'))
 )
 
 
@@ -103,21 +105,55 @@ class Post(db.Model):
     post_time = db.Column(db.DateTime, default=datetime.now)
     last_update = db.Column(db.DateTime, default=datetime.now)
     summary = db.Column(db.String(1024))
-    summary_html = db.Column(db.String(1024))
+    summary_html_cache = db.Column(db.String(1024))
     body = db.Column(db.Text)
-    body_html = db.Column(db.Text)
+    body_html_cache = db.Column(db.Text)
     tags = db.relationship(
         'Tag',
         secondary=tagged,
-        backref=db.backref('tags', lazy='dynamic'),
+        backref=db.backref('posts', lazy='dynamic'),
         lazy='select'
     )
     categories = db.relationship(
         'Category',
         secondary=categorized,
-        backref=db.backref('categories', lazy='dynamic'),
+        backref=db.backref('posts', lazy='dynamic'),
         lazy='select'
     )
+
+    def __init__(self, **kwargs):
+        fields = kwargs.copy()
+        if 'tags' in fields:
+            fields['tags'] = Tag.get_tags(fields['tags'])
+        if 'categories' in fields:
+            fields['categories'] = Category.get_cats(fields['categories'])
+        super(Post, self).__init__(**fields)
+
+    @property
+    def body_html(self):
+        if not self.body:
+            return None
+        if not self.body_html_cache:
+            self.body_html_cache = md2html(self.body)
+            db.session.add(self)
+            db.session.commit()
+        return self.body_html_cache
+
+    @property
+    def summary_html(self):
+        if not self.summary:
+            return None
+        if not self.summary_html_cache:
+            self.summary_html_cache = md2html(self.summary)
+            db.session.add(self)
+            db.session.commit()
+        return self.body_html_cache
+
+    def touch(self):
+        self.body_html_cache = None
+        self.summary_html_cache = None
+        db.session.add(self)
+        db.session.commit()
 
     def date(self, type='u'):
         dt = {'u': self.last_update, 'p': self.post_time}
@@ -125,11 +161,11 @@ class Post(db.Model):
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        target.body_html = md2html(value)
+        target.body_html_cache = md2html(value) if value else None
 
     @staticmethod
     def on_changed_summary(target, value, oldvalue, initiator):
-        target.summary_html = md2html(value)
+        target.summary_html_cache = md2html(value) if value else None
 
 
 class Tag(db.Model):
@@ -142,11 +178,15 @@ class Tag(db.Model):
 
     @classmethod
     def get_tags(cls, seq):
+        if not seq:
+            return []
+        if isinstance(seq, list) and isinstance(seq[0], cls):
+            return seq
         tags = []
         new_tags = []
         _seq = [t.strip() for t in seq.split(',')] if isinstance(seq, str) or \
             isinstance(seq, unicode) else (seq if isinstance(seq, list) else [])
-        for t in _seq:
+        for t in filter(lambda x: x, _seq):
             tag = cls.query.filter_by(name=t).first()
             if not tag:
                 tag = cls(name=t)
@@ -154,7 +194,6 @@ class Tag(db.Model):
             tags.append(tag)
         db.session.add_all(new_tags)
         db.session.flush()
-        print(tags)
         return tags
 
 
@@ -168,11 +207,15 @@ class Category(db.Model):
 
     @classmethod
     def get_cats(cls, seq):
+        if not seq:
+            return []
+        if isinstance(seq, list) and isinstance(seq[0], cls):
+            return seq
         cats = []
         new_cats = []
         _seq = [c.strip() for c in seq.split(',')] if isinstance(seq, str) or \
             isinstance(seq, unicode) else (seq if isinstance(seq, list) else [])
-        for c in _seq:
+        for c in filter(lambda x: x, _seq):
             cat = cls.query.filter_by(name=c).first()
             if not cat:
                 cat = cls(name=c)

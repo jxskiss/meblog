@@ -1,0 +1,22 @@
+{% extends "_base.html" %}
+
+{%- block title %}
+{% if tag %}标签：{{ tag.name }}{% elif category %}分类：{{ category.name }}{% endif %}
+{%- endblock title %}
+
+{% block content %}
+<section class="post-list">
+    <div class="container">
+        {% if tag %}<h2>贴上标签【{{ tag.name }}】的文章：</h2>{% elif category %}<h2>分类到【{{ category.name }}】的文章：</h2>{% endif %}
+        {% for post in posts %}
+            <article class="post-item">
+                <p><strong><a href="{{ url_for('.post', id=post.id) }}" class="post-link">{{ post.title }}</a></strong>
+                    — <span class="post-meta">最后更新：<time>{{ post.date() }}</time></span></p>
+                {% if post.summary %}<p><span>{{ post.summary | safe }}</span>
+                    <a href="{{ url_for('.post', id=post.id) }}" class="post-link readmore">&raquo;&raquo;&raquo;</a>{% endif %}
+                    {% if current_user.is_authenticated %}<a href="{{ url_for('.edit', id=post.id) }}" class="post-link edit-link">编辑</a>{% endif %}</p>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock content -%}

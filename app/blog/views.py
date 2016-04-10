@@ -30,10 +30,6 @@ def index(page=1):
 def post(id):
     post = Post.query.options(db.joinedload('tags')).options(
         db.joinedload('categories')).get_or_404(id)
-    if not post.body_html:
-        post.body_html = md2html(post.body)
-        db.session.add(post)
-        db.session.commit()
     return render_template('blog/post.html', post=post)
 
 
@@ -44,12 +40,9 @@ def new():
     if form.validate_on_submit():
         post = Post(
             title=form.title.data,
-            author_id=current_user.id,
-            summary=form.summary.data,
-            body=form.body.data,
-            tags=Tag.get_tags(form.tags.data),
-            categories=Category.get_cats(form.categories.data)
-        )
+            summary=form.summary.data, body=form.body.data,
+            tags=form.tags.data, categories=form.categories.data)
+        post.author = current_user
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('.post', id=post.id))
@@ -77,6 +70,28 @@ def edit(id):
     form.tags.data = ', '.join([t.name for t in post.tags])
     form.categories.data = ', '.join([c.name for c in post.categories])
     return render_template('blog/edit.html', post=post, form=form)
+
+
+@blog.route('/touch/<int:id>', methods=['GET'])
+@login_required
+def touch(id):
+    post = Post.query.filter_by(id=id).first()
+    post.touch()
+    return redirect(url_for('.post', id=post.id))
+
+
+@blog.route('/tag/<int:id>', methods=['GET'])
+def tag(id):
+    tag_ = Tag.query.get_or_404(id)
+    posts = tag_.posts
+    return render_template('blog/list.html', posts=posts, tag=tag_)
+
+
+@blog.route('/category/<int:id>', methods=['GET'])
+def category(id):
+    cat_ = Category.query.get_or_404(id)
+    posts = cat_.posts
+    return render_template('blog/list.html', posts=posts, category=cat_)
 
 
 @blog.route('/atom.xml')
