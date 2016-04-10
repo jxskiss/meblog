@@ -111,13 +111,13 @@ class Post(db.Model):
     tags = db.relationship(
         'Tag',
         secondary=tagged,
-        backref=db.backref('tags', lazy='dynamic'),
+        backref=db.backref('posts', lazy='dynamic'),
         lazy='select'
     )
     categories = db.relationship(
         'Category',
         secondary=categorized,
-        backref=db.backref('categories', lazy='dynamic'),
+        backref=db.backref('posts', lazy='dynamic'),
         lazy='select'
     )
 

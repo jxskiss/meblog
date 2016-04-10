@@ -80,6 +80,20 @@ def touch(id):
     return redirect(url_for('.post', id=post.id))
 
 
+@blog.route('/tag/<int:id>', methods=['GET'])
+def tag(id):
+    tag_ = Tag.query.get_or_404(id)
+    posts = tag_.posts
+    return render_template('blog/list.html', posts=posts, tag=tag_)
+
+
+@blog.route('/category/<int:id>', methods=['GET'])
+def category(id):
+    cat_ = Category.query.get_or_404(id)
+    posts = cat_.posts
+    return render_template('blog/list.html', posts=posts, category=cat_)
+
+
 @blog.route('/atom.xml')
 def atom_feed():
     feed = AtomFeed(u'最新文章', feed_url=request.url, url=request.url_root)
