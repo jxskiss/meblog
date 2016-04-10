@@ -6,6 +6,6 @@ handlers:
   static_path: static
   gzip: on
 - url: /favicon.ico
-  static_path: favicon.ico
+  static_path: /static/favicon.ico
 - url: /robots.txt
-  static_path: robots.txt
+  static_path: /static/robots.txt
